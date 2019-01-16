@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>PWA Space Wars</title>
+    <meta name="description" content="space-wars description">
+
+    <!-- See https://goo.gl/OOhYW5 -->
+    <link rel="manifest" href="/manifest.json">
+    <base href="/">
+    <script>
+      window.Polymer = {rootPath: '/'};
+    </script>
+    <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.3/firebase.js"></script>
+    <link rel="import" href="/src/space-wars-app/space-wars-app.html">
+  </head>
+  <body>
+    <space-wars-app></space-wars-app>
+  </body>
+</html>

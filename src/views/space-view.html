@@ -1,0 +1,39 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="space-view">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <dom-repeat items="[[players]]" as="player">
+            <template>
+                <p>[[player.nickname]] - Status [[player.isOnline]]</p>
+            </template>
+        </dom-repeat>
+    </template>
+
+    <script>
+      /**
+       * @customElement
+       * @polymer
+       */
+      class SpaceView extends Polymer.Element {
+        static get is() {
+          return 'space-view';
+        }
+
+        static get properties() {
+          return {
+            players: {
+              type: Array,
+              value: []
+            }
+          };
+        }
+      }
+
+      window.customElements.define(SpaceView.is, SpaceView);
+    </script>
+</dom-module>

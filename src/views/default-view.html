@@ -1,0 +1,28 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="default-view">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+    </template>
+
+    <script>
+      /**
+       * @customElement
+       * @polymer
+       */
+      class DefaultView extends Polymer.Element {
+        static get is() { return 'default-view'; }
+        static get properties() {
+          return {
+
+          };
+        }
+      }
+
+      window.customElements.define(DefaultView.is, DefaultView);
+    </script>
+</dom-module>

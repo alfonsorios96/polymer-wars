@@ -1,0 +1,39 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="game-view">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <h3>[[player.nickname]] - [[player.isOnline]]</h3>
+    </template>
+
+    <script>
+      /**
+       * @customElement
+       * @polymer
+       */
+      class GameView extends Polymer.Element {
+        static get is() {
+          return 'game-view';
+        }
+
+        static get properties() {
+          return {
+            players: {
+              type: Array,
+              value: []
+            },
+            player: {
+              type: Object,
+              value: {}
+            }
+          };
+        }
+      }
+
+      window.customElements.define(GameView.is, GameView);
+    </script>
+</dom-module>

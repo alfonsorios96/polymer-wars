@@ -1,0 +1,190 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+
+<link rel="lazy-import" href="../views/login-view.html">
+<link rel="lazy-import" href="../views/space-view.html">
+<link rel="lazy-import" href="../views/game-view.html">
+<link rel="lazy-import" href="../views/default-view.html">
+
+<dom-module id="space-wars-app">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            app-header {
+                color: #fff;
+                background-color: var(--space-wars-color, #000000);
+            }
+
+            .info-item {
+                margin-right: 15px;
+            }
+        </style>
+        <app-location route="{{route}}"></app-location>
+        <app-route route="{{route}}" pattern="/:page" data="{{routeData}}"></app-route>
+        <app-drawer-layout fullbleed>
+            <app-header-layout>
+                <app-header slot="header" condenses reveals fixed effects="waterfall">
+                    <app-toolbar>
+                        <div main-title>Space Wars</div>
+                        <dom-if if="[[showInfoItems]]">
+                            <template>
+                                <div class="info-item">Score: [[player.score]]</div>
+                                <div class="info-item">Durability: [[player.life]]/100</div>
+                            </template>
+                        </dom-if>
+                    </app-toolbar>
+                </app-header>
+                <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="default"
+                            role="main">
+                    <login-view name="login" on-user-logged="play"></login-view>
+                    <game-view name="game" players="[[players]]" player="[[player]]"></game-view>
+                    <space-view name="space" players="[[players]]"></space-view>
+                    <default-view name="default"></default-view>
+                </iron-pages>
+            </app-header-layout>
+        </app-drawer-layout>
+    </template>
+
+    <script>
+      /**
+       * @customElement
+       * @polymer
+       */
+      class SpaceWarsApp extends Polymer.Element {
+        static get is() {
+          return 'space-wars-app';
+        }
+
+        static get properties() {
+          return {
+            page: {
+              type: String,
+              reflectToAttribute: true,
+              observer: '_resolvePage'
+            },
+            database: {
+              type: Object,
+              value: {}
+            },
+            players: {
+              type: Array,
+              value: []
+            },
+            player: {
+              type: Object,
+              value: {}
+            },
+            showInfoItems: {
+              type: Boolean,
+              value: false
+            }
+          };
+        }
+
+        static get observers() {
+          return [
+            '_changePage(routeData.page)',
+            '_checkActive(player.isOnline)'
+          ];
+        }
+
+        connectedCallback() {
+          super.connectedCallback();
+          this._bootstrap();
+        }
+
+        play({detail}) {
+          const existPlayer = this.players.filter(player => player.nickname === detail.nickname);
+          let key, currentPlayer;
+          if (existPlayer.length > 0) {
+            currentPlayer = existPlayer[0];
+            key = currentPlayer.key;
+          } else {
+            key = this.database.ref('/players').push().key;
+            currentPlayer = {
+              nickname: detail.nickname,
+              isOnline: false,
+              life: 100,
+              score: 0
+            };
+          }
+          currentPlayer.key = key;
+          this.set('player', currentPlayer);
+          this._onPlayer();
+        }
+
+        _changePage(page) {
+          this.set('page', page || 'login');
+        }
+
+        _resolvePage(page) {
+          // Load page import on demand. Show 404 page if fails
+          const resolvedPageUrl = this.resolveUrl('../views/' + page + '-view.html');
+          Polymer.importHref(
+            resolvedPageUrl,
+            null,
+            this._showPage404.bind(this),
+            true);
+        }
+
+        _showPage404() {
+          this.page = 'default';
+        }
+
+        _onPlayer() {
+          this.set('player.isOnline', true);
+          this.database.ref('/players/' + this.player.key).set(this.player);
+          this.set('routeData.page', 'game');
+        }
+
+        _offPlayer() {
+          if (this.player.key && this.player.key !== '') {
+            this.set('player.isOnline', false);
+            this.database.ref('/players/' + this.player.key).set(this.player);
+            this.set('routeData.page', 'login');
+          }
+        }
+
+        _bootstrap() {
+          // Initialize Firebase
+          const config = {
+            apiKey: "AIzaSyDkv5f0YVtOzg1C9GhIdk12vZ8kP9Mn9PM",
+            authDomain: "space-wars-dfc31.firebaseapp.com",
+            databaseURL: "https://space-wars-dfc31.firebaseio.com",
+            projectId: "space-wars-dfc31",
+            storageBucket: "space-wars-dfc31.appspot.com",
+            messagingSenderId: "468426530114"
+          };
+          firebase.initializeApp(config);
+          this.set('database', firebase.database());
+          this._initPlayers();
+          window.addEventListener('blur', this._offPlayer.bind(this));
+        }
+
+        _initPlayers() {
+          this.database.ref('/players').on('value', snapshot => {
+            const usersObject = snapshot.val();
+            const players = [];
+            for (const key in usersObject) {
+              usersObject[key].key = key;
+              players.push(usersObject[key]);
+            }
+            this.set('players', players);
+          });
+        }
+
+        _checkActive(isOnline) {
+          this.set('showInfoItems', isOnline);
+        }
+      }
+
+      window.customElements.define(SpaceWarsApp.is, SpaceWarsApp);
+    </script>
+</dom-module>

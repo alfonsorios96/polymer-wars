@@ -1,0 +1,29 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/space-wars-app/space-wars-app.html",
+  "fragments": [
+    "src/views/default-view.html",
+    "src/views/game-view.html",
+    "src/views/login-view.html",
+    "src/views/space-view.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-loader.js"
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ]
+  },
+  "builds": [
+    {
+      "name": "dist",
+      "preset": "es6-unbundled"
+    }
+  ]
+}

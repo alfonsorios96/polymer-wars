@@ -1,0 +1,55 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="login-view">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            .container {
+                width: 600px;
+                padding: 10px;
+            }
+
+            paper-button {
+                width: 100%;
+                height: 20px;
+                color: #fff;
+                background-color: #000;
+            }
+        </style>
+        <div class="container">
+            <paper-input id="nickname" label="Nickname"></paper-input>
+            <paper-button on-tap="play">Play !</paper-button>
+        </div>
+    </template>
+
+    <script>
+      /**
+       * @customElement
+       * @polymer
+       */
+      class LoginView extends Polymer.Element {
+        static get is() {
+          return 'login-view';
+        }
+
+        static get properties() {
+          return {};
+        }
+
+        play() {
+          const user = {
+            nickname: this.$.nickname.value
+          };
+          this.$.nickname.value = '';
+          this.dispatchEvent(new CustomEvent('user-logged', {detail: user}));
+        }
+      }
+
+      window.customElements.define(LoginView.is, LoginView);
+    </script>
+</dom-module>

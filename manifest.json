@@ -1,0 +1,6 @@
+{
+  "name": "space-wars",
+  "short_name": "space-wars",
+  "start_url": "/",
+  "display": "standalone"
+}
