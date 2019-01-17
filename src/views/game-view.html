@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+
 <dom-module id="game-view">
     <template>
         <style>
@@ -7,6 +9,7 @@
                 display: block;
             }
         </style>
+        <app-route route="{{route}}" pattern="/:page" data="{{routeData}}"></app-route>
         <h3>[[player.nickname]] - [[player.isOnline]]</h3>
     </template>
 
@@ -20,6 +23,12 @@
           return 'game-view';
         }
 
+        static get observers() {
+          return [
+            '_validateFocusPage(routeData.page)'
+          ];
+        }
+
         static get properties() {
           return {
             players: {
@@ -31,6 +40,12 @@
               value: {}
             }
           };
+        }
+
+        _validateFocusPage(page) {
+          if(page !== 'game'){
+            window.history.pushState({}, null, '/login');
+          }
         }
       }
 
